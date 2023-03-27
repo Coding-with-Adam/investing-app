@@ -52,12 +52,11 @@ layout = dbc.Container(
                             [
                                 dbc.RadioItems(
                                     id="time-line",
-                                    className="btn-group mb-2",
+                                    className="w-100 mb-2",
                                     inputClassName="btn-check",
                                     labelClassName="btn btn-outline-primary",
                                     labelCheckedClassName="active",
                                     persistence=True,
-                                    style={"width": "15%"},
                                     options=[
                                         {"label": "5D",
                                          "value": "5d"},
@@ -75,6 +74,7 @@ layout = dbc.Container(
                                          "value": "10y"},
                                     ],
                                     value="5y",
+                                    inline=True
                                 ),
                             ],
                             className="radio-group",
