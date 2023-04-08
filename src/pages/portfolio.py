@@ -3,6 +3,7 @@ from dash import Dash, html, dcc, callback, Input, Output, State, no_update, ctx
 import dash_bootstrap_components as dbc  # version 1.4.0
 import pandas as pd  # version 1.5.3
 import plotly.express as px
+from numerize import numerize
 
 register_page(__name__, path="/")
 
@@ -278,7 +279,8 @@ def update_balance(cell_change, total_investment, data):
         dff = pd.DataFrame(data)
         dff["balance_prct"] = pd.to_numeric(dff["balance_prct"], errors="coerce")
         dff["balance_dollar"] = (dff["balance_prct"] * total_investment / 100)  # update dollar column
-        return dff.to_dict("records"), dff["balance_prct"].sum(), 100 - dff["balance_prct"].sum()
+        outstanding = numerize.numerize(100 - dff["balance_prct"].sum(), 2)
+        return dff.to_dict("records"), dff["balance_prct"].sum(), outstanding
     else:
         return no_update, no_update, no_update
 
