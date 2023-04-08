@@ -1,4 +1,3 @@
-import dash_ag_grid as dag
 from dash import Dash, html, dcc, callback, Input, Output, no_update, ctx, register_page
 import dash_bootstrap_components as dbc  #  version 1.4.0
 import pandas as pd  # version 1.5.3
@@ -37,7 +36,6 @@ layout = dbc.Container(
                             value="AAPL",
                             clearable=False,
                             searchable=True,
-                            placeholder="Search",
                             persistence=True,
                             className="mb-2",
                             id="ticker-select",
@@ -131,7 +129,7 @@ def remove_options(ticker_value, compare_value):
     Input("time-line", "value"),
 )
 def create_graph(ticker_value, compare_value, time_value):
-    # if only the left ticker dropdown has a value selected
+    # if only the first dropdown has a value selected
     if compare_value is None or len(compare_value) == 0:
         df1 = get_stock_data(ticker_value, time_value, "1d", "ticker")
         if df1.empty:
@@ -168,7 +166,7 @@ def create_graph(ticker_value, compare_value, time_value):
             return no_update, True, "ticker-select"
 
         else:
-            # ensure both stock tickers start from the same date incase one is newer than the other
+            # ensure both stock tickers start from the same date in case one is newer than the other
             first_valid_date = new_df.loc[:, new_df.isna().any()].first_valid_index()
             df1 = new_df.loc[first_valid_date:, :].copy()
 
