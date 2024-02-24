@@ -265,24 +265,27 @@ def update_dash_table(n_dlt, n_add, data):
     prevent_initial_call=True,
 )
 def update_balance(cell_change, total_investment, data):
+    # Ensure cell_change is a dictionary
+    if isinstance(cell_change, dict) and "colId" in cell_change:
+        if cell_change["colId"] == "balance_prct":
+            # Your existing logic when the balance percentage column is changed
+            dff = pd.DataFrame(data)
+            dff["balance_prct"] = pd.to_numeric(dff["balance_prct"], errors="coerce")
+            dff["balance_dollar"] = (dff["balance_prct"] * total_investment / 100)
+            outstanding = numerize.numerize(100 - dff["balance_prct"].sum(), 2)
+            return dff.to_dict("records"), dff["balance_prct"].sum(), outstanding
+
     if ctx.triggered_id == "money-to-invest":
+        # Your existing logic for updating based on total investment
         if total_investment is None:
             return no_update, no_update, no_update
         else:
             dff = pd.DataFrame(data)
             dff["balance_prct"] = pd.to_numeric(dff["balance_prct"], errors="coerce")
-            dff["balance_dollar"] = (dff["balance_prct"] * total_investment / 100)  # update dollar column
+            dff["balance_dollar"] = (dff["balance_prct"] * total_investment / 100)
             return dff.to_dict("records"), no_update, no_update
 
-    # update Total Percentage and Outstanding fields
-    elif cell_change is not None and cell_change["colId"] == "balance_prct":
-        dff = pd.DataFrame(data)
-        dff["balance_prct"] = pd.to_numeric(dff["balance_prct"], errors="coerce")
-        dff["balance_dollar"] = (dff["balance_prct"] * total_investment / 100)  # update dollar column
-        outstanding = numerize.numerize(100 - dff["balance_prct"].sum(), 2)
-        return dff.to_dict("records"), dff["balance_prct"].sum(), outstanding
-    else:
-        return no_update, no_update, no_update
+    return no_update, no_update, no_update
 
 
 # build the Pie Chart
